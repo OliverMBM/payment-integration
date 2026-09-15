@@ -4,10 +4,13 @@ import com.applicacorp.payments.dto.PaymentRequest;
 import com.applicacorp.payments.dto.PaymentResponse;
 import com.applicacorp.payments.entity.Payment;
 import com.applicacorp.payments.entity.PaymentStatus;
+import com.applicacorp.payments.exception.DuplicatePaymentException;
 import com.applicacorp.payments.integration.core.CorePaymentSender;
 import com.applicacorp.payments.mapper.PaymentXmlMapper;
 import com.applicacorp.payments.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Service
 public class PaymentService {
@@ -27,6 +30,10 @@ public class PaymentService {
     }
 
     public PaymentResponse processPayment(PaymentRequest request) {
+
+        if (paymentRepository.existsById(request.id())) {
+            throw new DuplicatePaymentException(request.id());
+        }
 
         Payment payment = new Payment(
                 request.id(),
@@ -55,5 +62,36 @@ public class PaymentService {
                 payment.getTimestamp(),
                 payment.getStatus().name()
         );
+    }
+
+    public List<PaymentResponse> findPayments(
+            String customerId,
+            OffsetDateTime from,
+            OffsetDateTime to
+    ) {
+
+        List<Payment> payments;
+
+        if (customerId != null && from != null && to != null) {
+            payments = paymentRepository
+                    .findByCustomerIdAndTimestampBetween(
+                            customerId,
+                            from,
+                            to
+                    );
+
+        } else if (customerId != null) {
+            payments = paymentRepository.findByCustomerId(customerId);
+
+        } else if (from != null && to != null) {
+            payments = paymentRepository.findByTimestampBetween(from, to);
+
+        } else {
+            payments = paymentRepository.findAll();
+        }
+
+        return payments.stream()
+                .map(this::toResponse)
+                .toList();
     }
 }
