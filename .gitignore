@@ -32,3 +32,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Python ###
+python/.venv/
+python/__pycache__/
+python/payments_summary.csv
