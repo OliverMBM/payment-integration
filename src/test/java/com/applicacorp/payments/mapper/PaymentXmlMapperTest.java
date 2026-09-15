@@ -26,7 +26,6 @@ class PaymentXmlMapperTest {
         );
 
         String xml = mapper.toXml(payment);
-        System.out.println(xml);
 
         assertThat(xml)
                 .contains("<payment>")

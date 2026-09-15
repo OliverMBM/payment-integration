@@ -11,6 +11,7 @@ import java.time.OffsetDateTime;
 public record PaymentRequest (
 
         @NotBlank(message = "id is required")
+        @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "id contains invalid characters")
         String id,
 
         @NotBlank(message = "customerId is required")
