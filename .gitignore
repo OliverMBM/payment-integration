@@ -3,6 +3,7 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+outbox/
 
 ### STS ###
 .apt_generated
@@ -31,3 +32,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Python ###
+python/.venv/
+python/__pycache__/
+python/payments_summary.csv
